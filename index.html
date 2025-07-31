@@ -139,7 +139,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Previous JS Data and Functions remain the same...
             const teacherDetails = { 'AH': 'Aynul Habib', 'AM': 'Md. Alam Mondal', 'RI': 'Md. Rafiqul Islam', 'FI': 'Fokhrol Islam', 'AR': 'Anisur Rahman', 'ARJ': 'Arifur Rahman Jewel', 'MR': 'Mizanur Rahman', 'NS': 'Nasrin Sultana', 'NP': 'Nirmal Chandra Paul', 'NM': 'Statistics (NM)', 'PHY': 'Physics (NM)' };
-                                    const routineData = {
+                                                const routineData = {
                 'SUNDAY_1': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' },
                 'SUNDAY_2': { teacher: 'AM', subject: 'Fundamentals of Math', chapter: 'Elements of Logic' },
                 'SUNDAY_3': { teacher: 'NM', subject: 'Statistics', chapter: 'Statistics' },
@@ -158,13 +158,12 @@
                 'WEDNESDAY_1': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' },
                 'WEDNESDAY_2': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' },
                 'WEDNESDAY_3': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' },
-                'WEDNESDAY_4': 'NM-ARJ',
+                // --- CORRECTED WEDNESDAY 4th PERIOD ---
+                'WEDNESDAY_4': { teacher: 'Upcoming', subject: 'Statistics (Probable)', chapter: 'Upcoming' },
 
-                // --- UPDATED THURSDAY SCHEDULE ---
                 'THURSDAY_1': { teacher: 'MR', subject: 'Calculus', chapter: 'Function & their graph' },
                 'THURSDAY_2': { teacher: 'FI', subject: 'Fundamentals of Math', chapter: 'Complex Number' },
                 'THURSDAY_3': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' }
-                // THURSDAY_4 slot has been removed
             };
             const timeSlots = ['9:45–10:30', '10:30–11:15', '11:15–12:00', '12:00–12:45'];
             const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'];

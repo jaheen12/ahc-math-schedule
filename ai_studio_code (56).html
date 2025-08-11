@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1200">
+    <title>Class Schedule & Resources</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #3D52A0;
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-dark: #333;
+            --text-light: #fff;
+            --shadow-color: rgba(31, 38, 135, 0.3);
+            --bg-current-strong: #ff9800;
+            --bg-next-day-light: #b3e5fc;
+        }
+        body { margin: 0; padding: 2rem; font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #3D52A0, #7071E8, #C471ED, #F77D92); background-attachment: fixed; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+        .schedule-container { width: 100%; max-width: 1200px; background: var(--glass-bg); border-radius: 25px; padding: 2rem; box-shadow: 0 8px 32px var(--shadow-color); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); }
+        .header { text-align: center; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .print-btn { padding: 10px 20px; border: none; border-radius: 12px; background: rgba(255, 255, 255, 0.3); font-weight: 700; cursor: pointer; transition: all 0.3s ease; }
+        .print-btn:hover { background: rgba(255,255,255,0.5); }
+        .title-panel { background: rgba(255, 255, 255, 0.25); border-radius: 20px; padding: 0.75rem 2.5rem; border: 1px solid var(--glass-border); backdrop-filter: blur(5px); flex-grow: 1; text-align: center; margin: 0 20px; }
+        .header h1 { font-weight: 900; font-size: clamp(2rem, 5vw, 3.5rem); color: var(--text-light); margin: 0; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2); }
+        .tab-navigation { display: flex; justify-content: center; gap: 15px; margin-bottom: 2rem; flex-wrap: wrap; }
+        .tab-btn { padding: 12px 25px; border: none; border-radius: 12px; background: rgba(255, 255, 255, 0.3); font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text-dark); cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .tab-btn:hover { background: rgba(255, 255, 255, 0.5); transform: translateY(-2px); }
+        .tab-btn.active { background: var(--text-light); color: var(--primary-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+        .tab-content { display: none; animation: fadeIn 0.5s ease-in-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        table { width: 100%; border-collapse: separate; border-spacing: 10px; text-align: center; }
+        th, td { padding: 1rem 0.4rem; border-radius: 15px; vertical-align: middle; line-height: 1.4; min-height: 80px; font-size: 0.9rem; transition: all 0.3s ease; }
+        thead th { color: var(--text-light); font-weight: 700; font-size: 1.05rem; background-color: #ff8fab; }
+        td { background-color: var(--text-light); font-weight: 700; color: var(--text-dark); }
+        tbody td:first-child { color: var(--text-light); font-weight: 700; font-size: 1.05rem; width: 15%; }
+        tbody tr:nth-of-type(1) td:first-child { background-color: #fec89a; } tbody tr:nth-of-type(2) td:first-child { background-color: #90dbf4; } tbody tr:nth-of-type(3) td:first-child { background-color: #a0c4ff; } tbody tr:nth-of-type(4) td:first-child { background-color: #80ed99; } tbody tr:nth-of-type(5) td:first-child { background-color: #bdb2ff; }
+        td .subject { font-weight: 900; font-size: 1rem; color: var(--primary-blue); }
+        .next-day-highlight { background-color: var(--bg-next-day-light); }
+        .current-class { background-color: var(--bg-current-strong); color: var(--text-light); animation: pulse-current 1.5s infinite alternate; z-index: 10; position: relative; }
+        .current-class .subject, .current-class .teacher, .current-class .chapter { color: var(--text-light); }
+        @keyframes pulse-current { from { opacity: 1; } to { opacity: 0.9; } }
+        
+        .suggester-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .suggester-controls { display: flex; gap: 20px; margin-bottom: 2rem; }
+        .suggester-controls select { flex-grow: 1; padding: 15px; border: 1px solid rgba(0,0,0,0.1); border-radius: 12px; background-color: rgba(255,255,255,0.7); font-family: 'Nunito', sans-serif; font-size: 1.1rem; font-weight: 700; }
+        #book-suggestions { margin-top: 1rem; }
+        .suggestion-item { background: rgba(255,255,255,0.7); padding: 15px 20px; margin-bottom: 10px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .suggestion-item .book-info { display: flex; align-items: center; gap: 10px; }
+        .suggestion-item .book-title { font-weight: 900; }
+        .suggestion-item .folder-link { padding: 8px 15px; border-radius: 8px; background: var(--primary-blue); color: var(--text-light); text-decoration: none; font-weight: 700; font-size: 0.9rem; transition: all 0.2s ease; }
+        .suggestion-item .folder-link:hover { opacity: 0.8; }
+        .copy-btn { background: none; border: none; cursor: pointer; font-size: 1.2rem; opacity: 0.6; transition: all 0.2s ease; }
+        .copy-btn:hover { opacity: 1; transform: scale(1.2); }
+        .copy-btn.copied { color: #4CAF50; }
+
+        .tutorial-btn { background: rgba(255,255,255,0.3); border: none; border-radius: 10px; padding: 8px 15px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; }
+        .tutorial-btn:hover { background: #fff; }
+        .book-tutorial { display: none; background: rgba(255, 255, 255, 0.6); padding: 1rem 1.5rem; margin-bottom: 2rem; border-radius: 15px; border: 1px solid var(--glass-border); }
+        .book-tutorial.active { display: block; }
+        .book-tutorial h4 { margin-top: 0; }
+        .book-tutorial ol { padding-left: 20px; }
+        .book-tutorial li { margin-bottom: 8px; }
+
+        @media print { /* Print styles */ }
+    </style>
+</head>
+<body>
+    <div class="schedule-container">
+        <header class="header">
+            <button class="print-btn" id="print-button">🖨️ Print</button>
+            <div class="title-panel"><h1>Class Schedule</h1></div>
+            <div style="width: 86px;"></div> 
+        </header>
+        <nav class="tab-navigation">
+            <button class="tab-btn active" data-tab="all">All Combined</button>
+            <button class="tab-btn" data-tab="teachers">Teachers</button>
+            <button class="tab-btn" data-tab="subjects">Subjects</button>
+            <button class="tab-btn" data-tab="chapters">Chapters</button>
+            <button class="tab-btn" data-tab="notice">Notice Board</button>
+            <button class="tab-btn" data-tab="books">Book Suggester</button>
+        </nav>
+        <div class="content-wrapper">
+            <div id="all" class="tab-content active"></div>
+            <div id="teachers" class="tab-content"></div>
+            <div id="subjects" class="tab-content"></div>
+            <div id="chapters" class="tab-content"></div>
+            <div id="notice" class="tab-content"><p>Loading notices...</p></div>
+            <div id="books" class="tab-content">
+                
+                <div class="suggester-header">
+                    <h2>Book Suggester</h2>
+                    <button id="tutorial-toggle-btn" class="tutorial-btn">❓ How to use</button>
+                </div>
+                <div id="book-tutorial" class="book-tutorial">
+                    <h4>How the Book Suggester Works</h4>
+                    <ol>
+                        <li>First, select a <strong>Subject</strong> from the dropdown menu on the left.</li>
+                        <li>Then, select the <strong>Chapter</strong> you are studying from the dropdown on the right.</li>
+                        <li>The tool will automatically suggest the most relevant books from our library for that specific topic.</li>
+                        <li>Click the <strong>Copy button (📋)</strong> to copy the book's name, then click the <strong>"Go to Folder"</strong> link to open the Google Drive folder and easily search for the file.</li>
+                    </ol>
+                </div>
+                
+                <div class="suggester-controls">
+                    <select id="subject-select"><option value="">-- Select a Subject --</option></select>
+                    <select id="chapter-select"><option value="">-- Select a Chapter --</option></select>
+                </div>
+                <div id="book-suggestions">
+                    <p>Please select a subject and chapter to see book suggestions.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="book-data.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const teacherDetails = { 'AH': 'Aynul Habib', 'AM': 'Md. Alam Mondal', 'RI': 'Md. Rafiqul Islam', 'FI': 'Fokhrol Islam', 'AR': 'Anisur Rahman', 'ARJ': 'Arifur Rahman Jewel', 'MR': 'Mizanur Rahman', 'NS': 'Nasrin Sultana', 'NP': 'Nirmal Chandra Paul', 'NM': 'Statistics (NM)', 'PHY': 'Physics (NM)' };
+            
+            const routineData = {
+                'SUNDAY_1': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' },
+                'SUNDAY_2': { teacher: 'AM', subject: 'Fundamentals of Math', chapter: 'Elements of Logic' },
+                'SUNDAY_3': { teacher: 'NM', subject: 'Statistics', chapter: 'Statistics' },
+                'SUNDAY_5': { subject: 'NM-STAT'},
+
+                'MONDAY_1': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' },
+                'MONDAY_2': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' },
+                'MONDAY_3': { teacher: 'ARJ', subject: 'Calculus', chapter: 'Integral Calculus' },
+                'MONDAY_4': { subject: 'NM-PHY'},
+
+                'TUESDAY_1': { teacher: 'RI', subject: 'Linear Algebra', chapter: 'Vectors in R^n and C^n' },
+                'TUESDAY_2': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' },
+                'TUESDAY_3': { teacher: 'FI', subject: 'Fundamentals of Math', chapter: 'Complex Number' },
+                'TUESDAY_4': { subject: 'NM-STAT'},
+                'TUESDAY_5': { subject: 'NM-PHY'},
+
+                'WEDNESDAY_1': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' },
+                'WEDNESDAY_2': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' },
+                'WEDNESDAY_3': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' },
+                'WEDNESDAY_4': { subject: 'NM-STAT' },
+                'WEDNESDAY_5': { subject: 'NM-PHY'},
+
+                'THURSDAY_1': { teacher: 'MR', subject: 'Calculus', chapter: 'Function & their graph' },
+                'THURSDAY_2': { teacher: 'FI', subject: 'Fundamentals of Math', chapter: 'Complex Number' },
+                'THURSDAY_3': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' },
+                'THURSDAY_5': { subject: 'NM-PHY'},
+            };
+
+            const timeSlots = ['9:45–10:30', '10:30–11:15', '11:15–12:00', '12:00–12:45', '12:45–1:30'];
+            const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'];
+
+            function generateTables() { 
+                const containers = { teachers: document.getElementById('teachers'), subjects: document.getElementById('subjects'), chapters: document.getElementById('chapters'), all: document.getElementById('all') }; 
+                const headerHTML = `<thead><tr><th>DAY</th><th>${timeSlots.join('</th><th>')}</th></tr></thead>`; 
+                for (const type in containers) { 
+                    if (!containers[type]) continue; 
+                    let tableBodyHTML = '<tbody>'; 
+                    days.forEach(day => { 
+                        tableBodyHTML += `<tr><td><strong>${day}</strong></td>`; 
+                        timeSlots.forEach((time, index) => { 
+                            const key = `${day}_${index + 1}`; 
+                            const data = routineData[key]; 
+                            let cellContent = ''; 
+                            if (typeof data === 'string') { 
+                                cellContent = data; 
+                            } else if (data) { 
+                                switch (type) { 
+                                    case 'teachers': 
+                                        cellContent = (data.teacher) ? `${teacherDetails[data.teacher] || data.teacher}<br>(${data.teacher})` : '';
+                                        break; 
+                                    case 'subjects': 
+                                        cellContent = data.subject || ''; 
+                                        break; 
+                                    case 'chapters': 
+                                        cellContent = data.chapter || ''; 
+                                        break; 
+                                    case 'all': 
+                                        // --- THIS IS THE FIX ---
+                                        cellContent = `<div class="subject">${data.subject || ''}</div>`;
+                                        if (data.teacher) {
+                                            cellContent += `<div class="teacher">${teacherDetails[data.teacher] || data.teacher} (${data.teacher})</div>`;
+                                        }
+                                        if (data.chapter) {
+                                            cellContent += `<div class="chapter">${data.chapter}</div>`;
+                                        }
+                                        break; 
+                                } 
+                            } 
+                            tableBodyHTML += `<td>${cellContent}</td>`; 
+                        }); 
+                        tableBodyHTML += '</tr>'; 
+                    }); 
+                    tableBodyHTML += '</tbody>'; 
+                    containers[type].innerHTML = `<table>${headerHTML}${tableBodyHTML}</table>`; 
+                } 
+            }
+            
+            function setupBookSuggester() {
+                const subjectSelect = document.getElementById('subject-select');
+                const chapterSelect = document.getElementById('chapter-select');
+                const suggestionsContainer = document.getElementById('book-suggestions');
+                const tutorialBtn = document.getElementById('tutorial-toggle-btn');
+                const tutorialBox = document.getElementById('book-tutorial');
+                tutorialBtn.addEventListener('click', () => {
+                    tutorialBox.classList.toggle('active');
+                });
+
+                if (typeof syllabusData !== 'undefined') {
+                    for (const subject in syllabusData) { subjectSelect.innerHTML += `<option value="${subject}">${subject}</option>`; }
+                    subjectSelect.addEventListener('change', () => { const selectedSubject = subjectSelect.value; chapterSelect.innerHTML = '<option value="">-- Select a Chapter --</option>'; suggestionsContainer.innerHTML = '<p>Please select a chapter to see book suggestions.</p>'; if (selectedSubject && syllabusData[selectedSubject]) { for (const chapter in syllabusData[selectedSubject]) { chapterSelect.innerHTML += `<option value="${chapter}">${chapter}</option>`; } } });
+                    chapterSelect.addEventListener('change', () => { const selectedSubject = subjectSelect.value; const selectedChapter = chapterSelect.value; if (!selectedChapter) { suggestionsContainer.innerHTML = '<p>Please select a chapter to see book suggestions.</p>'; return; } const chapterKeywords = syllabusData[selectedSubject][selectedChapter]; let suggestedBooks = []; for (const book of bookDatabase) { for (const keyword of chapterKeywords) { if (book.keywords.includes(keyword)) { if (!suggestedBooks.find(b => b.name === book.name)) { suggestedBooks.push(book); } } } } if (suggestedBooks.length > 0) { let html = '<h4>Suggested Reading:</h4>'; suggestedBooks.forEach(book => { const folderLink = driveLinks[book.category] || '#'; const cleanBookName = book.name.replace('.pdf', ''); html += ` <div class="suggestion-item"> <div class="book-info"> <button class="copy-btn" title="Copy book name">📋</button> <span class="book-title" data-bookname="${cleanBookName}">${cleanBookName}</span> </div> <a href="${folderLink}" target="_blank" class="folder-link">Go to ${book.category.replace(/_/g, ' ')} Folder ↗</a> </div>`; }); suggestionsContainer.innerHTML = html; } else { suggestionsContainer.innerHTML = '<p>No specific book suggestions found for this chapter. Check the main category folders.</p>'; } });
+                    suggestionsContainer.addEventListener('click', function(e) { if (e.target && e.target.classList.contains('copy-btn')) { const button = e.target; const bookTitleSpan = button.nextElementSibling; const bookName = bookTitleSpan.dataset.bookname; navigator.clipboard.writeText(bookName).then(() => { button.textContent = '✅'; button.classList.add('copied'); setTimeout(() => { button.textContent = '📋'; button.classList.remove('copied'); }, 1500); }).catch(err => { console.error('Failed to copy text: ', err); }); } });
+                }
+            }
+
+            function setupTabs() { 
+                const tabs = document.querySelectorAll('.tab-btn'); 
+                const contents = document.querySelectorAll('.tab-content'); 
+                let noticeLoaded = false; let booksLoaded = false; 
+                async function loadNoticeContent() { 
+                    if (!noticeLoaded) { 
+                        try { 
+                            const response = await fetch('notice.html'); 
+                            if (!response.ok) throw new Error('notice.html not found!'); 
+                            const content = await response.text(); 
+                            document.getElementById('notice').innerHTML = content; 
+                            noticeLoaded = true; 
+                        } catch (error) { 
+                            console.error('Could not load notices:', error); 
+                            document.getElementById('notice').innerHTML = `<p>Error: Could not load the notice board.</p>`; 
+                        } 
+                    } 
+                } 
+                tabs.forEach(tab => { 
+                    tab.addEventListener('click', () => { 
+                        const targetTabId = tab.dataset.tab; 
+                        if (targetTabId === 'notice') loadNoticeContent(); 
+                        if (targetTabId === 'books' && !booksLoaded) { 
+                            setupBookSuggester(); 
+                            booksLoaded = true; 
+                        } 
+                        tabs.forEach(item => item.classList.remove('active')); 
+                        contents.forEach(item => item.classList.remove('active')); 
+                        tab.classList.add('active'); 
+                        document.getElementById(targetTabId).classList.add('active'); 
+                    }); 
+                }); 
+            }
+            
+            function setupHighlights() { 
+                const now = new Date(); 
+                const currentDay = now.getDay(); 
+                const currentTime = now.getHours() + now.getMinutes() / 60; 
+                const classEndTime = 13.5; 
+                let nextDayToHighlight = -1; 
+                
+                if (currentDay >= 5) { nextDayToHighlight = 0; } 
+                else if (currentDay === 4 && currentTime >= classEndTime) { nextDayToHighlight = 0; } 
+                else if (currentDay < 4 && currentTime >= classEndTime) { nextDayToHighlight = currentDay + 1; } 
+                else if (currentDay > 0 && currentTime < classEndTime) { nextDayToHighlight = currentDay; } 
+                else if (currentDay === 0) { nextDayToHighlight = 0; } 
+                
+                if (nextDayToHighlight !== -1) { 
+                    const tableRowIndex = [1, 2, 3, 4, 5][nextDayToHighlight]; 
+                    if (tableRowIndex) { 
+                        document.querySelectorAll(`table tbody tr:nth-child(${tableRowIndex}) td:not(:first-child)`).forEach(cell => cell.classList.add('next-day-highlight')); 
+                    } 
+                } 
+                
+                if (currentDay >= 0 && currentDay <= 4) { 
+                    let timeIndex = -1; 
+                    const timeRanges = [ 
+                        { start: 9.75, end: 10.5 }, 
+                        { start: 10.5, end: 11.25 }, 
+                        { start: 11.25, end: 12.0 }, 
+                        { start: 12.0, end: 12.75 },
+                        { start: 12.75, end: 13.5 }
+                    ]; 
+                    
+                    for (let i = 0; i < timeRanges.length; i++) { 
+                        if (currentTime >= timeRanges[i].start && currentTime < timeRanges[i].end) { 
+                            timeIndex = i; break; 
+                        } 
+                    } 
+                    
+                    if (timeIndex !== -1) { 
+                        const tableRowIndex = [1, 2, 3, 4, 5][currentDay]; 
+                        if (tableRowIndex) { 
+                            document.querySelectorAll(`table tbody tr:nth-child(${tableRowIndex}) td:nth-child(${timeIndex + 2})`).forEach(cell => cell.classList.add('current-class')); 
+                        } 
+                    } 
+                } 
+            }
+            function setupPrint() { document.getElementById('print-button').addEventListener('click', () => window.print()); }
+
+            generateTables();
+            setupTabs();
+            setupHighlights();
+            setupPrint();
+        });
+    </script>
+</body>
+</html>
